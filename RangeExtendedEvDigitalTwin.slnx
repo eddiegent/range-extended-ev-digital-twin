@@ -1,0 +1,40 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Api/">
+    <Project Path="src/Api/RangeExtendedEvDigitalTwin.Api.csproj" />
+  </Folder>
+  <Folder Name="/src/AppHost/">
+    <Project Path="src/AppHost/RangeExtendedEvDigitalTwin.AppHost.csproj" />
+  </Folder>
+  <Folder Name="/src/Application/">
+    <Project Path="src/Application/RangeExtendedEvDigitalTwin.Application.csproj" />
+  </Folder>
+  <Folder Name="/src/Contracts/">
+    <Project Path="src/Contracts/RangeExtendedEvDigitalTwin.Contracts.csproj" />
+  </Folder>
+  <Folder Name="/src/Infrastructure/">
+    <Project Path="src/Infrastructure/RangeExtendedEvDigitalTwin.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/ServiceDefaults/">
+    <Project Path="src/ServiceDefaults/RangeExtendedEvDigitalTwin.ServiceDefaults.csproj" />
+  </Folder>
+  <Folder Name="/src/Simulation/">
+    <Project Path="src/Simulation/RangeExtendedEvDigitalTwin.Simulation.csproj" />
+  </Folder>
+  <Folder Name="/tests/" />
+  <Folder Name="/tests/Api.Tests/">
+    <Project Path="tests/Api.Tests/RangeExtendedEvDigitalTwin.Api.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Application.Tests/">
+    <Project Path="tests/Application.Tests/RangeExtendedEvDigitalTwin.Application.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Architecture.Tests/">
+    <Project Path="tests/Architecture.Tests/RangeExtendedEvDigitalTwin.Architecture.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Infrastructure.Tests/">
+    <Project Path="tests/Infrastructure.Tests/RangeExtendedEvDigitalTwin.Infrastructure.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Simulation.Tests/">
+    <Project Path="tests/Simulation.Tests/RangeExtendedEvDigitalTwin.Simulation.Tests.csproj" />
+  </Folder>
+</Solution>

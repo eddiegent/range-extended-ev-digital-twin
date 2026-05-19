@@ -1,0 +1,37 @@
+# Build output
+bin/
+obj/
+out/
+dist/
+coverage/
+playwright-report/
+test-results/
+
+# Node
+node_modules/
+.npm/
+
+# IDE
+.idea/
+.vs/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# OS
+Thumbs.db
+Desktop.ini
+
+# Secrets and env
+.env
+.env.*
+!.env.example
+*.secrets.json
+
+# Aspire / containers
+.aspire/
+
+# Supabase
+deploy/supabase/.temp/
