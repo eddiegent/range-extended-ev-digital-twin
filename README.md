@@ -23,7 +23,7 @@ No simulation features or business workflows are implemented yet.
 - **Realtime:** SignalR
 - **Persistence:** PostgreSQL
 - **Integration boundary:** RabbitMQ for selected external events
-- **Auth infrastructure:** Supabase
+- **Auth infrastructure:** ASP.NET Core Identity + PostgreSQL
 - **Orchestration:** .NET Aspire + Docker
 - **Testing:** xUnit + Playwright
 
@@ -66,9 +66,16 @@ npm test
 Intended local infrastructure flow:
 
 1. Start Docker Desktop.
-2. Run the Aspire AppHost from `src/AppHost`.
-3. Use `deploy/docker/docker-compose.yml` for containerized API/frontend/database/broker composition.
-4. Use `deploy/supabase/docker-compose.yml` for the local Supabase auth/studio scaffold.
+2. Run the Aspire AppHost from `src/AppHost` to boot the API, frontend, PostgreSQL, and RabbitMQ.
+3. Use `deploy/docker/docker-compose.yml` for a containerized alternative of the same stack.
+
+The scaffold assumes the following local infrastructure defaults:
+
+- API URL: `http://127.0.0.1:8080` in Docker or the Aspire-assigned endpoint in AppHost
+- PostgreSQL: `postgresql://postgres:postgres@127.0.0.1:5432/simulationdb`
+- RabbitMQ management: `http://127.0.0.1:15672`
+
+Authentication infrastructure is scaffolded with ASP.NET Core Identity backed by PostgreSQL, but no login or registration endpoints are implemented yet.
 
 ## Architecture records
 

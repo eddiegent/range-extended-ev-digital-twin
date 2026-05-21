@@ -33,5 +33,3 @@ Desktop.ini
 # Aspire / containers
 .aspire/
 
-# Supabase
-deploy/supabase/.temp/

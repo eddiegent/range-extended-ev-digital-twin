@@ -10,4 +10,6 @@ This repository is scaffolded as a **modular monolith** with explicit delivery a
 - `frontend` hosts the operator console shell.
 - `tests` hosts backend and browser test harnesses.
 
+The local scaffold uses **Aspire-orchestrated PostgreSQL** as the single database and **ASP.NET Core Identity** as the authentication foundation. Docker compose mirrors the same API, frontend, PostgreSQL, and RabbitMQ topology outside Aspire.
+
 Stage 1 focuses on scaffolding, orchestration, and development workflow. Domain behavior is intentionally not implemented yet.

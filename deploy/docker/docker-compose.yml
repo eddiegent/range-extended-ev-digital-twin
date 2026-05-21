@@ -24,8 +24,6 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__simulationdb: Host=postgres;Port=5432;Database=simulationdb;Username=postgres;Password=postgres
       ConnectionStrings__rabbitmq: amqp://guest:guest@rabbitmq:5672
-      Supabase__Url: http://host.docker.internal:9999
-      Supabase__AnonKey: replace-me
     depends_on:
       - postgres
       - rabbitmq
@@ -40,8 +38,6 @@ services:
       - api
     ports:
       - "4173:80"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
 
 volumes:
   postgres-data:

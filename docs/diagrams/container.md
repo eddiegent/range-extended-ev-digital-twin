@@ -13,6 +13,5 @@ flowchart TB
     AppHost --> Frontend
     AppHost --> Postgres[(PostgreSQL)]
     AppHost --> RabbitMQ[(RabbitMQ)]
-    AppHost --> Supabase[Supabase services]
     Tests --> Frontend
 ```

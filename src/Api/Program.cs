@@ -15,6 +15,9 @@ var app = builder.Build();
 
 app.MapDefaultEndpoints();
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapGet(
     "/",
     () => Results.Ok(
@@ -26,6 +29,7 @@ app.MapGet(
             {
                 "health",
                 "signalr-shell",
+                "identity-store",
                 "service-discovery",
                 "infrastructure-wiring"
             }

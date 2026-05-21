@@ -4,7 +4,9 @@ public sealed class InfrastructureOptions
 {
     public const string SectionName = "Infrastructure";
 
-    public string EventStoreSchema { get; init; } = "simulation";
+    public string AuthenticationSchema { get; init; } = DatabaseSchemas.Authentication;
 
-    public string ProjectionSchema { get; init; } = "projection";
+    public string EventStoreSchema { get; init; } = DatabaseSchemas.EventStore;
+
+    public string ProjectionSchema { get; init; } = DatabaseSchemas.Projection;
 }
