@@ -4,16 +4,17 @@ Portfolio-grade scaffold for a range-extended electric vehicle digital twin buil
 
 ## Status
 
-This repository currently contains **project scaffolding only**:
+This repository currently contains the platform scaffold plus the first auth slice:
 
 - .NET solution and project layout
 - Aspire orchestration shell
 - Docker and local infrastructure shell
 - React + TypeScript + Tailwind frontend shell
+- Bootstrap operator sign-in, sign-out, and auth-status flow
 - xUnit and Playwright test harnesses
 - GitHub automation and architecture documentation scaffolding
 
-No simulation features or business workflows are implemented yet.
+No simulation features are implemented yet beyond operator access.
 
 ## Planned architecture
 
@@ -63,6 +64,14 @@ npx playwright install chromium
 npm test
 ```
 
+EF Core migration baseline:
+
+```powershell
+dotnet tool restore
+dotnet dotnet-ef migrations add InitialIdentitySchema --project .\src\Infrastructure\RangeExtendedEvDigitalTwin.Infrastructure.csproj
+dotnet dotnet-ef database update --project .\src\Infrastructure\RangeExtendedEvDigitalTwin.Infrastructure.csproj
+```
+
 Intended local infrastructure flow:
 
 1. Start Docker Desktop.
@@ -75,7 +84,12 @@ The scaffold assumes the following local infrastructure defaults:
 - PostgreSQL: `postgresql://postgres:postgres@127.0.0.1:5432/simulationdb`
 - RabbitMQ management: `http://127.0.0.1:15672`
 
-Authentication infrastructure is scaffolded with ASP.NET Core Identity backed by PostgreSQL, but no login or registration endpoints are implemented yet.
+Authentication now includes a bootstrap operator flow backed by ASP.NET Core Identity and PostgreSQL.
+
+Local demo operator credentials in Development:
+
+- email: `operator@local.test`
+- password: `Passw0rd`
 
 ## Architecture records
 

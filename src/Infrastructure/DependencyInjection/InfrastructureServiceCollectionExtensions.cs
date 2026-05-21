@@ -12,22 +12,34 @@ public static class InfrastructureServiceCollectionExtensions
 {
     public static IServiceCollection AddInfrastructure(
         this IServiceCollection services,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        Action<DbContextOptionsBuilder>? configureDbContext = null)
     {
         services.Configure<InfrastructureOptions>(
             configuration.GetSection(InfrastructureOptions.SectionName));
+        services.Configure<BootstrapOperatorOptions>(
+            configuration.GetSection(BootstrapOperatorOptions.SectionName));
 
-        var connectionString = configuration.GetConnectionString("simulationdb")
-            ?? throw new InvalidOperationException(
-                "Connection string 'simulationdb' is required for PostgreSQL-backed infrastructure.");
+        services.AddDbContext<SimulationDbContext>(
+            options =>
+            {
+                if (configureDbContext is not null)
+                {
+                    configureDbContext(options);
+                    return;
+                }
 
-        services.AddDbContext<SimulationDbContext>(options =>
-            options.UseNpgsql(
-                connectionString,
-                npgsql =>
-                    npgsql.MigrationsHistoryTable(
-                        "__EFMigrationsHistory",
-                        DatabaseSchemas.Authentication)));
+                var connectionString = configuration.GetConnectionString("simulationdb")
+                    ?? throw new InvalidOperationException(
+                        "Connection string 'simulationdb' is required for PostgreSQL-backed infrastructure.");
+
+                options.UseNpgsql(
+                    connectionString,
+                    npgsql =>
+                        npgsql.MigrationsHistoryTable(
+                            "__EFMigrationsHistory",
+                            DatabaseSchemas.Authentication));
+            });
 
         services.AddAuthentication(IdentityConstants.ApplicationScheme)
             .AddIdentityCookies();
@@ -47,6 +59,7 @@ public static class InfrastructureServiceCollectionExtensions
             .AddSignInManager()
             .AddDefaultTokenProviders();
 
+        services.AddHostedService<BootstrapOperatorHostedService>();
         services.AddSingleton(new InfrastructureAssemblyMarker());
 
         return services;

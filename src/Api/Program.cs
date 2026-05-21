@@ -1,3 +1,4 @@
+using RangeExtendedEvDigitalTwin.Api.Authentication;
 using RangeExtendedEvDigitalTwin.Api.Realtime;
 using RangeExtendedEvDigitalTwin.Application.DependencyInjection;
 using RangeExtendedEvDigitalTwin.Infrastructure.DependencyInjection;
@@ -17,6 +18,8 @@ app.MapDefaultEndpoints();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapAuthEndpoints();
 
 app.MapGet(
     "/",
