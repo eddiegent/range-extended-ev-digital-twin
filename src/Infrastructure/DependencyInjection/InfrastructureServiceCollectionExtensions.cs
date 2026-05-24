@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -12,31 +13,56 @@ public static class InfrastructureServiceCollectionExtensions
 {
     public static IServiceCollection AddInfrastructure(
         this IServiceCollection services,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        Action<DbContextOptionsBuilder>? configureDbContext = null)
     {
         services.Configure<InfrastructureOptions>(
             configuration.GetSection(InfrastructureOptions.SectionName));
+        services.Configure<BootstrapOperatorOptions>(
+            configuration.GetSection(BootstrapOperatorOptions.SectionName));
 
-        var connectionString = configuration.GetConnectionString("simulationdb")
-            ?? throw new InvalidOperationException(
-                "Connection string 'simulationdb' is required for PostgreSQL-backed infrastructure.");
+        services.AddDbContext<SimulationDbContext>(
+            options =>
+            {
+                if (configureDbContext is not null)
+                {
+                    configureDbContext(options);
+                    return;
+                }
 
-        services.AddDbContext<SimulationDbContext>(options =>
-            options.UseNpgsql(
-                connectionString,
-                npgsql =>
-                    npgsql.MigrationsHistoryTable(
-                        "__EFMigrationsHistory",
-                        DatabaseSchemas.Authentication)));
+                var connectionString = configuration.GetConnectionString("simulationdb")
+                    ?? throw new InvalidOperationException(
+                        "Connection string 'simulationdb' is required for PostgreSQL-backed infrastructure.");
+
+                options.UseNpgsql(
+                    connectionString,
+                    npgsql =>
+                        npgsql.MigrationsHistoryTable(
+                            "__EFMigrationsHistory",
+                            DatabaseSchemas.Authentication));
+            });
 
         services.AddAuthentication(IdentityConstants.ApplicationScheme)
             .AddIdentityCookies();
+
+        services.ConfigureApplicationCookie(
+            options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SameSite = SameSiteMode.Strict;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+                options.ExpireTimeSpan = TimeSpan.FromHours(8);
+                options.SlidingExpiration = true;
+            });
 
         services.AddAuthorization();
 
         services.AddIdentityCore<OperatorUser>(options =>
             {
                 options.User.RequireUniqueEmail = true;
+                options.Lockout.AllowedForNewUsers = true;
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
                 options.Password.RequiredLength = 8;
                 options.Password.RequireDigit = true;
                 options.Password.RequireUppercase = true;
@@ -47,6 +73,7 @@ public static class InfrastructureServiceCollectionExtensions
             .AddSignInManager()
             .AddDefaultTokenProviders();
 
+        services.AddHostedService<BootstrapOperatorHostedService>();
         services.AddSingleton(new InfrastructureAssemblyMarker());
 
         return services;

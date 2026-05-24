@@ -1,6 +1,9 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using RangeExtendedEvDigitalTwin.Infrastructure.Configuration;
 using RangeExtendedEvDigitalTwin.Infrastructure.Authentication;
 using RangeExtendedEvDigitalTwin.Infrastructure.DependencyInjection;
@@ -32,5 +35,19 @@ public sealed class InfrastructureCompositionTests
         Assert.Equal("auth", new InfrastructureOptions().AuthenticationSchema);
         Assert.NotNull(provider.GetService<SimulationDbContext>());
         Assert.NotNull(provider.GetService<IUserStore<OperatorUser>>());
+
+        var identityOptions = provider.GetRequiredService<IOptions<IdentityOptions>>().Value;
+        Assert.True(identityOptions.Lockout.AllowedForNewUsers);
+        Assert.Equal(5, identityOptions.Lockout.MaxFailedAccessAttempts);
+        Assert.Equal(TimeSpan.FromMinutes(15), identityOptions.Lockout.DefaultLockoutTimeSpan);
+
+        var applicationCookieOptions = provider
+            .GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>()
+            .Get(IdentityConstants.ApplicationScheme);
+        Assert.True(applicationCookieOptions.Cookie.HttpOnly);
+        Assert.Equal(SameSiteMode.Strict, applicationCookieOptions.Cookie.SameSite);
+        Assert.Equal(CookieSecurePolicy.SameAsRequest, applicationCookieOptions.Cookie.SecurePolicy);
+        Assert.Equal(TimeSpan.FromHours(8), applicationCookieOptions.ExpireTimeSpan);
+        Assert.True(applicationCookieOptions.SlidingExpiration);
     }
 }
