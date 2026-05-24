@@ -6,6 +6,9 @@ namespace RangeExtendedEvDigitalTwin.Api.Authentication;
 
 public static class AuthEndpoints
 {
+    private static readonly string MissingUserPasswordHash = new PasswordHasher<OperatorUser>()
+        .HashPassword(new OperatorUser(), "Missing-user-password-1!");
+
     public static IEndpointRouteBuilder MapAuthEndpoints(this IEndpointRouteBuilder endpoints)
     {
         var group = endpoints.MapGroup("/api/auth");
@@ -38,6 +41,10 @@ public static class AuthEndpoints
 
                     if (user is null)
                     {
+                        _ = userManager.PasswordHasher.VerifyHashedPassword(
+                            new OperatorUser(),
+                            MissingUserPasswordHash,
+                            request.Password);
                         return Results.Unauthorized();
                     }
 
@@ -45,7 +52,7 @@ public static class AuthEndpoints
                         user,
                         request.Password,
                         isPersistent: true,
-                        lockoutOnFailure: false);
+                        lockoutOnFailure: true);
 
                     if (!signInResult.Succeeded)
                     {

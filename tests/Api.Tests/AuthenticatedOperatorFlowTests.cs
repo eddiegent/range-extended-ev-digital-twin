@@ -1,5 +1,8 @@
 using System.Net;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using RangeExtendedEvDigitalTwin.Infrastructure.Authentication;
 
 namespace RangeExtendedEvDigitalTwin.Api.Tests;
 
@@ -44,6 +47,35 @@ public sealed class AuthenticatedOperatorFlowTests
 
         Assert.NotNull(signedOutStatus);
         Assert.False(signedOutStatus.IsAuthenticated);
+    }
+
+    [Fact]
+    public async Task Repeated_failed_sign_in_attempts_lock_the_bootstrapped_operator()
+    {
+        await using var host = await ApiTestHost.StartAsync();
+        using var client = host.Client;
+
+        for (var attempt = 0; attempt < 5; attempt++)
+        {
+            var failedResponse = await client.PostAsJsonAsync(
+                "/api/auth/sign-in",
+                new SignInRequest("operator@local.test", "WrongPass1"));
+
+            Assert.Equal(HttpStatusCode.Unauthorized, failedResponse.StatusCode);
+        }
+
+        var lockedOutResponse = await client.PostAsJsonAsync(
+            "/api/auth/sign-in",
+            new SignInRequest("operator@local.test", "Passw0rd"));
+
+        Assert.Equal(HttpStatusCode.Unauthorized, lockedOutResponse.StatusCode);
+
+        using var scope = host.Services.CreateScope();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<OperatorUser>>();
+        var user = await userManager.FindByEmailAsync("operator@local.test");
+
+        Assert.NotNull(user);
+        Assert.True(await userManager.IsLockedOutAsync(user));
     }
 
     public sealed record AuthStatusResponse(bool IsAuthenticated, string? Email, string? UserName);

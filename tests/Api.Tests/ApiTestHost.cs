@@ -22,6 +22,8 @@ public sealed class ApiTestHost : IAsyncDisposable
 
     public HttpClient Client { get; }
 
+    public IServiceProvider Services => _app.Services;
+
     public static async Task<ApiTestHost> StartAsync()
     {
         var builder = WebApplication.CreateBuilder();
